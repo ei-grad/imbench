@@ -1,0 +1,7 @@
+pytest
+pytest-benchmark
+numpy
+opencv-python-headless
+jpeg4py
+scikit-image
+imageio
