@@ -33,3 +33,8 @@ Optional pyvips
 apt install libvips-dev
 pip install pyvips
 ```
+
+Credits
+-------
+
+Thanks to @ternaus for the idea and initial test implementations: https://www.github.com/ternaus/imread_benchmark
