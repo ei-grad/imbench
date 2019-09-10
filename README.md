@@ -9,7 +9,7 @@ Use docker to run the pre-built image on your images set:
 docker run -it --rm -v /path/to/images/:/images -e IMAGES_PATTERN="/images/*" eigrad/imbench
 ```
 
-You can optinally rebuild the image from this the repository:
+You can optinally rebuild the image:
 
 ```bash
 git clone https://github.com/ei-grad/imbench.git
@@ -17,7 +17,7 @@ cd imbench
 docker build -t eigrad/imbench .
 ```
 
-Or install requirements and check the performance in your environment:
+Or install requirements and check the performance in your local Python environment:
 
 ```bash
 git clone https://github.com/ei-grad/imbench.git
