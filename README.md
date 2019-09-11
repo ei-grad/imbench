@@ -37,4 +37,4 @@ pip install pyvips
 Credits
 -------
 
-Thanks to @ternaus for the idea and initial test implementations: https://www.github.com/ternaus/imread_benchmark
+Thanks to @ternaus for the idea and initial test implementations: https://github.com/ternaus/imread_benchmark
