@@ -1,0 +1,55 @@
+FROM python:slim
+ADD requirements.txt .
+ENV CXXFLAGS="-O3 -march=native" CFLAGS="-O3 -march=native"
+RUN apt update && apt install -y --no-install-recommends \
+    libglib2.0-0 \
+    git \
+    build-essential \
+    cmake \
+    nasm \
+    wget \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir --no-binary :all: numpy
+
+RUN git clone --depth=1 https://github.com/libjpeg-turbo/libjpeg-turbo.git \
+ && cd libjpeg-turbo && mkdir build && cd build \
+ && cmake \
+    -D CMAKE_BUILD_TYPE=Release \
+	-D CMAKE_INSTALL_PREFIX=/usr/local \
+	.. \
+ && make -j$(nproc) && make install \
+ && cd ../.. && rm -rf libjpeg-turbo
+
+# CPU_AVX512_CEL_SUPPORTED=OFF is required for Cascade lake Xeon Gold 6230
+# See https://github.com/opencv/opencv/issues/15501
+
+RUN git clone --depth=1 https://github.com/opencv/opencv \
+ && cd opencv && mkdir build && cd build \
+ && cmake \
+	-D CPU_AVX512_CEL_SUPPORTED=OFF \
+	-D CMAKE_BUILD_TYPE=Release \
+	-D CMAKE_INSTALL_PREFIX=/usr/local \
+	-D BUILD_opencv_apps=ON \
+	-D BUILD_opencv_python3=ON \
+	-D BUILD_opencv_python2=OFF \
+	-D BUILD_JPEG=OFF \
+	-D OPENCV_CPU_OPT_IMPLIES_IGNORE=ON \
+	-D BUILD_OPENEXR=OFF \
+	-D BUILD_DOCS=OFF \
+	-D BUILD_PERF_TESTS=OFF \
+	-D BUILD_TESTS=OFF \
+	.. \
+ && make -j$(nproc) && make install \
+ && cd ../.. && rm -rf opencv
+
+RUN pip install --no-cache-dir \
+	pillow-simd \
+	pytest pytest-benchmark \
+	jpeg4py \
+	scikit-image \
+	imageio
+
+ADD imbench.py .
+
+ENTRYPOINT ["pytest", "imbench.py"]
