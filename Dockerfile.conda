@@ -1,0 +1,14 @@
+FROM continuumio/miniconda3
+ADD requirements.txt .
+RUN conda install \
+    pytest \
+    pytest-benchmark \
+    numpy \
+    opencv \
+    scikit-image \
+    imageio \
+ && conda install -c conda-forge libjpeg-turbo \
+ && pip install --no-cache-dir jpeg4py \
+ && conda clean --all && rm -rf /opt/conda/pkgs/*
+ADD imbench.py .
+ENTRYPOINT ["pytest", "imbench.py"]
