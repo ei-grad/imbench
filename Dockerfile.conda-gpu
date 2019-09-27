@@ -1,0 +1,21 @@
+FROM continuumio/miniconda3
+ADD requirements.txt .
+RUN conda install \
+    pytest \
+    pytest-benchmark \
+    numpy \
+    opencv \
+    scikit-image \
+    imageio \
+    tensorflow-mkl \
+    'cudatoolkit>=10.0,<10.1' \
+ && conda install -c conda-forge libjpeg-turbo \
+ && pip install --no-cache-dir jpeg4py \
+ && pip install --no-cache-dir --extra-index-url https://developer.download.nvidia.com/compute/redist/cuda/10.0 nvidia-dali \
+ && conda clean --all && rm -rf /opt/conda/pkgs/*
+ADD imbench.py .
+ENTRYPOINT ["pytest", "imbench.py"]
+
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV NVIDIA_REQUIRE_CUDA "cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411"
