@@ -7,6 +7,11 @@ import numpy as np
 import pytest
 
 
+def jpeg_only():
+    if not os.environ["IMAGES_PATTERN"].lower().endswith(".jpg"):
+        pytest.skip("jpeg only")
+
+
 @pytest.fixture
 def images():
     return cycle(glob(os.environ["IMAGES_PATTERN"]))
@@ -29,6 +34,7 @@ def test_opencv_array(images, benchmark):
 
 
 def test_jpeg4py_array(images, benchmark):
+    jpeg_only()
     jpeg4py = pytest.importorskip("jpeg4py")
 
     @benchmark
@@ -76,6 +82,8 @@ def test_tf_image(images, benchmark):
 
 @pytest.mark.parametrize("device", ["cpu", "mixed"])
 def test_nvidia_dali(device, images, benchmark):
+    if device == "mixed":
+        jpeg_only()
     pytest.importorskip("nvidia.dali")
     from nvidia.dali.pipeline import Pipeline
     import nvidia.dali.ops as ops
