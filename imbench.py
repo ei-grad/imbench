@@ -63,3 +63,12 @@ def test_pyvips_array(images, benchmark):
             dtype=np.uint8,
             shape=[image.height, image.width, image.bands],
         )
+
+
+def test_tf_image(images, benchmark):
+    tf = pytest.importorskip("tensorflow")
+    tf.enable_eager_execution()
+
+    @benchmark
+    def _():
+        tf.image.decode_jpeg(open(next(images), 'rb').read()).numpy()
