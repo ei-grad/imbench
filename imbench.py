@@ -71,7 +71,7 @@ def test_tf_image(images, benchmark):
 
     @benchmark
     def _():
-        tf.image.decode_jpeg(open(next(images), 'rb').read()).numpy()
+        tf.image.decode_image(open(next(images), 'rb').read()).numpy()
 
 
 @pytest.mark.parametrize("device", ["cpu", "mixed"])
@@ -88,7 +88,7 @@ def test_nvidia_dali(device, images, benchmark):
 
     f.flush()
 
-    class JPEGLoadPipeline(Pipeline):
+    class ImageLoadPipeline(Pipeline):
 
         def __init__(self, file_list):
             super().__init__(batch_size=1, num_threads=1, device_id=0, seed=42)
@@ -100,7 +100,7 @@ def test_nvidia_dali(device, images, benchmark):
             x = self.decode(x)
             return x
 
-    pipeline = JPEGLoadPipeline(f.name)
+    pipeline = ImageLoadPipeline(f.name)
     pipeline.build()
 
     if device == "cpu":
