@@ -7,6 +7,7 @@ RUN conda install \
     opencv \
     scikit-image \
     imageio \
+    tensorflow-mkl \
  && conda install -c conda-forge libjpeg-turbo \
  && pip install --no-cache-dir jpeg4py \
  && conda clean --all && rm -rf /opt/conda/pkgs/*
